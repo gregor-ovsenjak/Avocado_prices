@@ -40,10 +40,12 @@ class FeatImp():
         feat_importances.nlargest(10).plot(kind='barh',stacked=True,color = my_colors)
         plt.show()
     
-    def corr_matrix(self,target_name):
+    def corr_matrix(self,target_name,method_version = 0):
+        methods = ["pearson","kendall","spearman"]
+        
         X,y = seperate_target_feature(self.data,target_name)
         #get correlations of each features in dataset
-        correlation_matrix = self.data.corr()
+        correlation_matrix = self.data.corr(method = methods[method_version])
         top_corr_features = correlation_matrix[target_name].nlargest(10).index.values
         plt.figure(figsize=(10,10))
         #plot heat map
