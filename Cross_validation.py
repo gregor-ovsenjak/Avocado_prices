@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestRegressor,ExtraTreesRegressor,AdaBoostRegressor
 from sklearn.linear_model import LinearRegression,SGDRegressor
+from sklearn.tree import DecisionTreeRegressor
 from sklearn.svm import SVR
 from sklearn.model_selection import GridSearchCV, cross_val_score, KFold
 
@@ -36,23 +37,23 @@ def build_models():
     classifiers.append(SVR())
     classifiers.append(RandomForestRegressor())
     classifiers.append(ExtraTreesRegressor())
-    classifiers.append(AdaBoostRegressor(base_estimator=SGDRegressor()))
+    classifiers.append(AdaBoostRegressor(base_estimator=DecisionTreeRegressor()))
     classifiers.append(LinearRegression())
     classifiers.append(SGDRegressor())
 
     return classifiers
 
 def cross_validation(X_train,y_train):
+    model_names = ['SVR','Random Forest Regressor','Extra Trees Regressor','AdaBoost','LinearRegresion','SGD']
     models = build_models()
     btscv = BlockingTimeSeriesSplit(n_splits=5)
     cv_results = []
     for model in models:
         cv_results.append(cross_val_score(model, X_train, y_train, cv=btscv, scoring='r2'))
-    
     cv_means = []
     cv_std = []
     for cv_result in cv_results:
         cv_means.append(cv_result.mean())
         cv_std.append(cv_result.std())
-
-    return cv_means,cv_std
+    df_cv_results = pd.DataFrame(data=[cv_means,cv_std],index=["means","std"],columns = model_names)
+    return df_cv_results
