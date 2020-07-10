@@ -6,7 +6,7 @@ from sklearn.linear_model import LinearRegression,SGDRegressor
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.svm import SVR
 from sklearn.model_selection import GridSearchCV, cross_val_score, KFold
-
+from sklearn.model_selection import TimeSeriesSplit
 
 
 
@@ -47,9 +47,10 @@ def cross_validation(X_train,y_train):
     model_names = ['SVR','Random Forest Regressor','Extra Trees Regressor','AdaBoost','LinearRegresion','SGD']
     models = build_models()
     btscv = BlockingTimeSeriesSplit(n_splits=5)
+    ttscv = TimeSeriesSplit()
     cv_results = []
     for model in models:
-        cv_results.append(cross_val_score(model, X_train, y_train, cv=btscv, scoring='r2'))
+        cv_results.append(cross_val_score(model, X_train, y_train, cv=ttscv, scoring='r2'))
     cv_means = []
     cv_std = []
     for cv_result in cv_results:
